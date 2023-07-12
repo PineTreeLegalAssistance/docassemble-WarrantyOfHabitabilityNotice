@@ -1,6 +1,9 @@
 ---
 include:
   - docassemble.AssemblyLine:assembly_line.yml
+  
+features:
+  bootstrap theme: bootstrap.min_2.css
 ---
 metadata:
   title: |
