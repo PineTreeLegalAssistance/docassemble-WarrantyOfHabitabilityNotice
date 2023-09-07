@@ -1,15 +1,16 @@
 ---
 include:
   - docassemble.AssemblyLine:assembly_line.yml
+  - custom_ptla_theme_ngb.yml
   
 features:
-  bootstrap theme: bootstrap.min_2.css
+   navbar-brand: Green_Logo_-_Circle_Cropped.png
 ---
 metadata:
   title: |
-    Maine warranty of habitability notice
+    Maine Warranty of Habitability Notice
   short title: |
-    Maine warranty of habitability notice
+    Maine Warranty of Habitability Notice
   authors:
     - Nicole Golden-Bouchard
 ---
@@ -79,8 +80,10 @@ code: |
   set_progress(28)
   check_box6_wiring
   check_box7_sewage
-  other_descrip
+  check_box8_other
   set_progress(42)
+  if check_box8_other == 'yes':
+    other_descrip
   detail_complaint
   other_parties.gather()
   users.gather()
@@ -99,6 +102,8 @@ code: |
   al_intro_screen
   warranty_of_habitability_notice_intro
   interview_order_warranty_of_habitability_notice
+  if check_box8_other == 'yes':
+    other_discrip
   signature_date
   # Store anonymous data for analytics / statistics
   store_variables_snapshot(
@@ -120,7 +125,20 @@ continue button field: warranty_of_habitability_notice_intro
 question: |
   Maine warranty of habitability notice
 subquestion: |
-  Maine warranty of habitability notice
+  This interview will help you create a letter to your landlord that states you have significant problems with your rental unit that need to be fixed. The interview will ask specific questions about:
+  
+  - You 
+      - Your name 
+      - Your address    
+  - Your landlord
+      - Their name(s)
+      - Thier address(es) 
+  - The significant problems you have with the apartment. 
+  
+  Once you complete and sign your name, you will get a screen that allows you to view and download instructions on what to do next and to view and download the letter itself. 
+  
+  Thank you. We hope this interview is helpful. 
+  
 ---
 id: Issues with the Rental Unit
 question: |
@@ -182,14 +200,21 @@ id: Issue with the Rental Unit
 question: |
   Issue with the Rental Unit
 subquestion: |
-  Does the rental unit have any other physical issues that make it unsafe or unlivable? If so, please briefly list the issues. 
-  
-  NOTE: This does not include bothersome or unsafe people. This is only asking about the rental unit itself.
+  Does the rental unit have any other physical issues that make it unsafe or unlivable? 
+
+  NOTE: This question does not include bothersome or unsafe people. This is only asking about the rental unit itself.
+yesno: check_box8_other 
+---
+id: Issue with the Rental Unit
+question: |
+  Issue with the Rental Unit
+subquestion: |
 fields:
-  - "Description of Other": other_descrip
+  - "Description of Other physical issues": other_descrip
     maxlength: 24
-  - "Other": check_box3_other
-    datatype: yesno
+
+
+
 ---
 id: Description of Issues
 question: |
@@ -197,7 +222,7 @@ question: |
 subquestion: |
   Please briefly describe the issues you stated the rental unit has. 
   
-  Example: The rental unit has not had heat for a week. The furnace is broken and has not been repaired despite my request.
+  Example: "The rental unit has not had heat for a week. The furnace is broken and has not been repaired despite my request."
 fields:
   - "Description of the issues": detail_complaint
     input type: area
@@ -212,11 +237,11 @@ subquestion: |
   ${ al_recipient_bundle.as_pdf(key='preview') }
 
   Click the image to open it in a new tab. Click the "Edit answers" button
-  to edit your answers.
+  if you need to edit your answers. If you don't need to edit anything, click the "Next" button.
 
   ${ action_button_html(url_action('review_warranty_of_habitability_notice'), label='Edit answers', color='info') }
   
-  Remember to come back to this window to continue and sign your form.
+  Remember that if you need to edit, you will need to come back to this window to continue and sign your form.
 continue button field: warranty_of_habitability_notice_preview_question    
 ---
 code: |
@@ -273,10 +298,10 @@ review:
     button: |
       **Malfunctioning Sewage System**:
       ${ word(yesno(check_box7_sewage)) }
-  - Edit: check_box3_other
+  - Edit: check_box8_other
     button: |
       **Other**:
-      ${ word(yesno(check_box3_other)) }
+      ${ word(yesno(check_box8_other)) }
   - Edit: detail_complaint
     button: |
       **Description of the issues**:
@@ -348,7 +373,7 @@ subquestion: |
 progress: 100
 ---
 objects:
-  - warranty_of_habitability_notice_post_interview_instructions: ALDocument.using(title="Instructions", filename="warranty_of_habitability_notice_next_steps.docx", enabled=True, has_addendum=False, default_overflow_message=AL_DEFAULT_OVERFLOW_MESSAGE)
+  - warranty_of_habitability_notice_post_interview_instructions: ALDocument.using(title="Instructions", filename="warranty_of_habitability_notice_next_steps_2.docx", enabled=True, has_addendum=False, default_overflow_message=AL_DEFAULT_OVERFLOW_MESSAGE)
   - warranty_of_habitability_notice_attachment: ALDocument.using(title="Maine warranty of habitability notice", filename="warranty_of_habitability_notice.pdf", enabled=True, has_addendum=False, default_overflow_message=AL_DEFAULT_OVERFLOW_MESSAGE)
 ---
 objects:
@@ -360,7 +385,7 @@ attachments:
     filename: Post-interview-instructions     
     variable name: warranty_of_habitability_notice_post_interview_instructions[i]        
     skip undefined: True
-    docx template file: warranty_of_habitability_notice_next_steps.docx
+    docx template file: warranty_of_habitability_notice_next_steps_2.docx
   - name: warranty of habitability notice attachment
     filename: warranty_of_habitability_notice.pdf     
     variable name: warranty_of_habitability_notice_attachment[i]        
@@ -378,7 +403,7 @@ attachments:
       - "check_box6_wiring": ${ check_box6_wiring }
       - "other_descrip": ${ other_descrip }
       - "check_box7_sewage": ${ check_box7_sewage }
-      - "check_box3_other": ${ check_box3_other }
+      - "check_box8_other": ${ check_box8_other }
       - "detail_complaint": ${ detail_complaint }
       - "signature_date": ${ signature_date }
       - "users1_signature": ${ users[0].signature_if_final(i) }

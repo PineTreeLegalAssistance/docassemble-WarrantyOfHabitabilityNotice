@@ -1,6 +1,6 @@
 # docassemble.WarrantyOfHabitabilityNotice
 
-Maine warranty of habitability notice
+Maine Warranty of Habitability Notice
 
 ## Author
 
