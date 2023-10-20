@@ -85,7 +85,7 @@ code: |
 ########################### Intro screen #################################
 ---
 id: basic questions intro screen
-decoration: form-lineal
+#decoration: form-lineal
 question: |
   ${interview_short_title}: Pine Tree Legal Forms Online
 subquestion: |

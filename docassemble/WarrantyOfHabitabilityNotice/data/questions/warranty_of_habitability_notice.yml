@@ -82,7 +82,7 @@ code: |
   check_box7_sewage
   check_box8_other
   set_progress(42)
-  if check_box8_other == 'yes':
+  if check_box8_other == True:
     other_descrip
   detail_complaint
   other_parties.gather()
@@ -146,6 +146,7 @@ question: |
 subquestion: |
   The following questions will ask if there are specific issues with the rental unit. These questions are yes and no questions. You will have a chance to describe the specific issue in detail later.
 continue button field: Issues_with_the_Rental_Unit
+
 ---
 id: Issues with the Rental Unit
 question: |
@@ -153,6 +154,7 @@ question: |
 subquestion: |
   Does the rental unit have issues with inadequate heat?
 yesno: check_box1_heat
+
 ---
 id: Issue with the Rental Unit
 question: |
@@ -160,6 +162,7 @@ question: |
 subquestion: |
   Does the rental unit have issues with leaking ceilings?
 yesno: check_box2_leaking_ceilings
+
 ---
 id: Issue with the Rental Unit
 question: |
@@ -167,6 +170,7 @@ question: |
 subquestion: |
   Does the rental unit have issues with its hot water?
 yesno: check_box3_hot_water
+
 ---
 id: Issue with the Rental Unit
 question: |
@@ -174,6 +178,7 @@ question: |
 subquestion: |
   Does the rental unit have issues with unfit drinking water?
 yesno: check_box4_water
+
 ---
 id: Issue with the Rental Unit
 question: |
@@ -181,6 +186,7 @@ question: |
 subquestion: |
   Does the rental unit have issues with poor air quality?
 yesno: check_box5_air_quality
+
 ---
 id: Issue with the Rental Unit
 question: |
@@ -188,6 +194,7 @@ question: |
 subquestion: |
   Does the rental unit have issues with unsafe electrical wiring?
 yesno: check_box6_wiring
+
 ---
 id: Issue with the Rental Unit
 question: |
@@ -195,6 +202,7 @@ question: |
 subquestion: |
   Does the rental unit have issues with its sewage system or is the unit without a working toilet?
 yesno: check_box7_sewage
+
 ---
 id: Issue with the Rental Unit
 question: |
@@ -202,8 +210,9 @@ question: |
 subquestion: |
   Does the rental unit have any other physical issues that make it unsafe or unlivable? 
 
-  NOTE: This question does not include bothersome or unsafe people. This is only asking about the rental unit itself.
+  NOTE: This question does not include unsafe people. This is only asking about the rental unit itself.
 yesno: check_box8_other 
+ 
 ---
 id: Issue with the Rental Unit
 question: |
@@ -212,8 +221,6 @@ subquestion: |
 fields:
   - "Description of Other physical issues": other_descrip
     maxlength: 24
-
-
 
 ---
 id: Description of Issues
@@ -227,6 +234,30 @@ fields:
   - "Description of the issues": detail_complaint
     input type: area
     maxlength: 312
+
+---
+sets:
+  - other_parties[i].name.first
+  - other_parties[i].name.last
+  - other_parties[i].name.middle
+  - other_parties[i].name.suffix
+id: names of landlord or owner
+question: |
+  The **landlord** or owner of your rental unit
+fields:
+  - code: |
+      other_parties[i].name_fields(person_or_business='unsure')
+
+# ${ ordinal(i) } #
+---
+id: any other Landlord or Owner
+question: |
+  Is there another **landlord** or owner of your rental unit?
+  
+fields:
+  - no label: other_parties.there_is_another
+    datatype: yesnoradio
+
 ---
 id: preview warranty_of_habitability_notice
 question: |
@@ -373,7 +404,7 @@ subquestion: |
 progress: 100
 ---
 objects:
-  - warranty_of_habitability_notice_post_interview_instructions: ALDocument.using(title="Instructions", filename="warranty_of_habitability_notice_next_steps_2.docx", enabled=True, has_addendum=False, default_overflow_message=AL_DEFAULT_OVERFLOW_MESSAGE)
+  - warranty_of_habitability_notice_post_interview_instructions: ALDocument.using(title="Instructions", filename="warranty_of_habitability_notice_next_steps.docx", enabled=True, has_addendum=False, default_overflow_message=AL_DEFAULT_OVERFLOW_MESSAGE)
   - warranty_of_habitability_notice_attachment: ALDocument.using(title="Maine warranty of habitability notice", filename="warranty_of_habitability_notice.pdf", enabled=True, has_addendum=False, default_overflow_message=AL_DEFAULT_OVERFLOW_MESSAGE)
 ---
 objects:
@@ -385,14 +416,14 @@ attachments:
     filename: Post-interview-instructions     
     variable name: warranty_of_habitability_notice_post_interview_instructions[i]        
     skip undefined: True
-    docx template file: warranty_of_habitability_notice_next_steps_2.docx
+    docx template file: warranty_of_habitability_notice_next_steps.docx
   - name: warranty of habitability notice attachment
     filename: warranty_of_habitability_notice.pdf     
     variable name: warranty_of_habitability_notice_attachment[i]        
     skip undefined: True
     pdf template file: warranty_of_habitability_notice.pdf
     fields:
-      - "other_parties": ${ other_parties }
+      - "Landlord": ${ other_parties }
       - "users1_name": ${ users[0] }
       - "users1_address_on_one_line": ${ users[0].address.on_one_line() }
       - "check_box1_heat": ${ check_box1_heat }
@@ -407,3 +438,4 @@ attachments:
       - "detail_complaint": ${ detail_complaint }
       - "signature_date": ${ signature_date }
       - "users1_signature": ${ users[0].signature_if_final(i) }
+
